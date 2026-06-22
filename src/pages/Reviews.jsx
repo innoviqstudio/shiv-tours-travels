@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import axios from 'axios';
+import { API } from '../api';
 import { Star, MessageSquare, ThumbsUp, Send, CheckCircle2 } from 'lucide-react';
 
 const Reviews = () => {
@@ -50,7 +50,7 @@ const Reviews = () => {
   const [showSuccess, setShowSuccess] = useState(false);
 
   const fetchReviews = () => {
-    axios.get('/api/reviews')
+    API.get('/reviews')
       .then(res => {
         if (res.data && res.data.length > 0) {
           setReviews(res.data);
@@ -71,7 +71,7 @@ const Reviews = () => {
     }
     
     try {
-      const res = await axios.post('/api/reviews', newReview);
+      const res = await API.post('/reviews', newReview);
       if (res.data.success) {
         setNewReview({ name: '', rating: 5, comment: '' });
         setShowSuccess(true);

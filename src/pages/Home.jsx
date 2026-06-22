@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import axios from 'axios';
+import { API } from '../api';
 import Navbar from '../components/Navbar';
 import { 
   Car, Calendar, Clock, MapPin, Phone, ArrowRight, ShieldCheck, 
@@ -150,7 +150,7 @@ const Home = ({ setCurrentPage, setBookingData, openPayment }) => {
     };
 
     try {
-      await axios.post('/api/bookings', bookingRecord);
+      await API.post('/bookings', bookingRecord);
     } catch (err) {
       console.error('Failed to log WhatsApp booking to database:', err);
     }

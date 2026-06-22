@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CreditCard, Smartphone, Building2, Lock, CheckCircle2, Loader2, X, ShieldCheck } from 'lucide-react';
-import axios from 'axios';
+import { API } from '../api';
 
 const loadRazorpayScript = () => {
   return new Promise((resolve) => {
@@ -71,7 +71,7 @@ const PaymentModal = ({ isOpen, onClose, bookingData }) => {
 
     try {
       // 1. Create order on the backend server via Axios
-      const res = await axios.post('/api/payments/order', { amount: payAmount });
+      const res = await API.post('/payments/order', { amount: payAmount });
       const orderData = res.data;
       
       // 2. Check if real Razorpay or simulation mode
@@ -89,7 +89,7 @@ const PaymentModal = ({ isOpen, onClose, bookingData }) => {
             
             // Call backend order signature verification via Axios
             try {
-              const verifyRes = await axios.post('/api/payments/verify', {
+              const verifyRes = await API.post('/payments/verify', {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
@@ -153,7 +153,7 @@ const PaymentModal = ({ isOpen, onClose, bookingData }) => {
               bookingType: 'online'
             };
             
-            await axios.post('/api/payments/verify', {
+            await API.post('/payments/verify', {
               razorpay_order_id: orderData.orderId || 'MOCK_ORDER_ID',
               razorpay_payment_id: txnId,
               razorpay_signature: null,

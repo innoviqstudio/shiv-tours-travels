@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Car, Users, Check, AlertCircle, Info, Sparkles } from 'lucide-react';
-import axios from 'axios';
+import { API } from '../api';
 
 const Vehicles = ({ setBookingData, openPayment }) => {
   const [distance, setDistance] = useState(100);
@@ -153,7 +153,7 @@ const Vehicles = ({ setBookingData, openPayment }) => {
   const [fleet, setFleet] = useState(defaultFleet);
 
   useEffect(() => {
-    axios.get('/api/vehicles')
+    API.get('/vehicles')
       .then(res => {
         if (res.data && res.data.length > 0) {
           setFleet(res.data);

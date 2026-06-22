@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { API } from '../api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Lock, User, LogOut, Calendar, Car, MessageSquare, Mail, 
@@ -35,6 +35,7 @@ const Admin = () => {
   const [ownerReplyText, setOwnerReplyText] = useState('');
 
   // Check login state on load
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const token = localStorage.getItem('shiv_admin_token');
     if (token) {
@@ -44,6 +45,7 @@ const Admin = () => {
   }, []);
 
   // Fetch bookings when search or status filters change
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (isLoggedIn) {
       fetchBookingsOnly();
@@ -59,7 +61,7 @@ const Admin = () => {
   const fetchBookingsOnly = async () => {
     try {
       const token = localStorage.getItem('shiv_admin_token');
-      const res = await axios.get('/api/bookings', {
+      const res = await API.get('/bookings', {
         headers: { Authorization: `Bearer ${token}` },
         params: { search: searchQuery, status: statusFilter }
       });
@@ -80,26 +82,26 @@ const Admin = () => {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       
       // Bookings
-      const bookingsRes = await axios.get('/api/bookings', {
+      const bookingsRes = await API.get('/bookings', {
         headers: { Authorization: `Bearer ${token}` },
         params: { search: searchQuery, status: statusFilter }
       });
       setBookings(bookingsRes.data);
       
       // Vehicles
-      const vehiclesRes = await axios.get('/api/vehicles');
+      const vehiclesRes = await API.get('/vehicles');
       setVehicles(vehiclesRes.data);
 
       // Tour Packages
-      const packagesRes = await axios.get('/api/packages');
+      const packagesRes = await API.get('/packages');
       setPackages(packagesRes.data);
       
       // Reviews (fetching all, including unapproved ones)
-      const reviewsRes = await axios.get('/api/reviews?all=true', config);
+      const reviewsRes = await API.get('/reviews?all=true', config);
       setReviews(reviewsRes.data);
       
       // Inquiries
-      const inquiriesRes = await axios.get('/api/inquiries', config);
+      const inquiriesRes = await API.get('/inquiries', config);
       setInquiries(inquiriesRes.data);
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
@@ -116,7 +118,7 @@ const Admin = () => {
     e.preventDefault();
     setLoginError('');
     try {
-      const res = await axios.post('/api/auth/login', credentials);
+      const res = await API.post('/auth/login', credentials);
       if (res.data.success) {
         localStorage.setItem('shiv_admin_token', res.data.token);
         setIsLoggedIn(true);
@@ -136,7 +138,7 @@ const Admin = () => {
   const handleUpdateBookingStatus = async (id, newStatus) => {
     try {
       const token = localStorage.getItem('shiv_admin_token');
-      const res = await axios.put(`/api/bookings/${id}/status`, 
+      const res = await API.put(`/bookings/${id}/status`, 
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -152,7 +154,7 @@ const Admin = () => {
     if (!window.confirm('Are you sure you want to delete this booking?')) return;
     try {
       const token = localStorage.getItem('shiv_admin_token');
-      const res = await axios.delete(`/api/bookings/${id}`, {
+      const res = await API.delete(`/bookings/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.data.success) {
@@ -194,13 +196,13 @@ const Admin = () => {
         delete sendData.isNew;
         delete sendData.id;
         delete sendData._id;
-        const res = await axios.post('/api/vehicles', sendData, { headers });
+        const res = await API.post('/vehicles', sendData, { headers });
         if (res.data.success) {
           setVehicles([...vehicles, res.data.vehicle]);
           setEditingVehicle(null);
         }
       } else {
-        const res = await axios.put(`/api/vehicles/${vehicleId}`, vehicleData, { headers });
+        const res = await API.put(`/vehicles/${vehicleId}`, vehicleData, { headers });
         if (res.data.success) {
           setVehicles(vehicles.map(v => (v._id === vehicleId || v.id === vehicleId) ? res.data.vehicle : v));
           setEditingVehicle(null);
@@ -215,7 +217,7 @@ const Admin = () => {
     if (!window.confirm('Are you sure you want to delete this vehicle forever?')) return;
     try {
       const token = localStorage.getItem('shiv_admin_token');
-      const res = await axios.delete(`/api/vehicles/${id}`, {
+      const res = await API.delete(`/vehicles/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.data.success) {
@@ -256,13 +258,13 @@ const Admin = () => {
         delete sendData.isNew;
         delete sendData.id;
         delete sendData._id;
-        const res = await axios.post('/api/packages', sendData, { headers });
+        const res = await API.post('/packages', sendData, { headers });
         if (res.data.success) {
           setPackages([...packages, res.data.package]);
           setEditingPackage(null);
         }
       } else {
-        const res = await axios.put(`/api/packages/${packageId}`, packageData, { headers });
+        const res = await API.put(`/packages/${packageId}`, packageData, { headers });
         if (res.data.success) {
           setPackages(packages.map(p => (p._id === packageId || p.id === packageId) ? res.data.package : p));
           setEditingPackage(null);
@@ -277,7 +279,7 @@ const Admin = () => {
     if (!window.confirm('Are you sure you want to delete this package forever?')) return;
     try {
       const token = localStorage.getItem('shiv_admin_token');
-      const res = await axios.delete(`/api/packages/${id}`, {
+      const res = await API.delete(`/packages/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.data.success) {
@@ -292,7 +294,7 @@ const Admin = () => {
   const handleApproveReview = async (id, currentStatus) => {
     try {
       const token = localStorage.getItem('shiv_admin_token');
-      const res = await axios.put(`/api/reviews/${id}/approve`, 
+      const res = await API.put(`/reviews/${id}/approve`, 
         { approved: !currentStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -308,7 +310,7 @@ const Admin = () => {
     if (!window.confirm('Delete this review forever?')) return;
     try {
       const token = localStorage.getItem('shiv_admin_token');
-      const res = await axios.delete(`/api/reviews/${id}`, {
+      const res = await API.delete(`/reviews/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.data.success) {
@@ -324,7 +326,7 @@ const Admin = () => {
     if (!ownerReplyText.trim()) return;
     try {
       const token = localStorage.getItem('shiv_admin_token');
-      const res = await axios.post(`/api/reviews/${id}/reply`, 
+      const res = await API.post(`/reviews/${id}/reply`, 
         { comment: ownerReplyText },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Phone, Mail, MapPin, MessageSquare, Send, CheckCircle2, AlertCircle } from 'lucide-react';
-import axios from 'axios';
+import { API } from '../api';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -78,7 +78,7 @@ const Contact = () => {
       setErrors(validationErrors);
     } else {
       try {
-        const res = await axios.post('/api/inquiries', formData);
+        const res = await API.post('/inquiries', formData);
         if (res.data.success) {
           setShowSuccess(true);
           setFormData({ name: '', email: '', phone: '', message: '' });

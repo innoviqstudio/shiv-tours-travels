@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, Clock, MapPin, Sparkles, Check, X, PhoneCall } from 'lucide-react';
-import axios from 'axios';
+import { API } from '../api';
 
 const Packages = ({ setBookingData, openPayment }) => {
   const [filter, setFilter] = useState('all');
@@ -101,7 +101,7 @@ const Packages = ({ setBookingData, openPayment }) => {
   const [packages, setPackages] = useState(defaultPackages);
 
   useEffect(() => {
-    axios.get('/api/packages')
+    API.get('/packages')
       .then(res => {
         if (res.data && res.data.length > 0) {
           setPackages(res.data);
