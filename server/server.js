@@ -39,7 +39,11 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Shiv Travels API server is healthy and running' });
 });
 
-// Start Server
-app.listen(PORT, () => {
-  console.log(`Backend server running on http://localhost:${PORT}`);
-});
+// Start Server only in local development
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Backend server running on http://localhost:${PORT}`);
+  });
+}
+
+export default app;
