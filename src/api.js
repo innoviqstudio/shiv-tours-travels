@@ -1,5 +1,5 @@
 import axios from "axios";
 
 export const API = axios.create({
-  baseURL: "https://shiv-tours-travels-production.up.railway.app/api"
+  baseURL: "https://shiv-travels-backend.vercel.app/api"
 });
