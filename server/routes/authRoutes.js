@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
 const router = express.Router();
+console.log("authRoutes loaded");
 
 // Admin Login
 router.post('/login', async (req, res) => {
