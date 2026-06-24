@@ -1,4 +1,3 @@
-```js
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -8,48 +7,49 @@ const router = express.Router();
 
 console.log("authRoutes loaded");
 
-// Test route
 router.get('/', (req, res) => {
-  res.send('Auth route working');
+  res.json({
+    success: true,
+    message: 'Auth route working'
+  });
 });
 
-// Test login route
-router.get('/login', (req, res) => {
-  res.send('Login endpoint exists');
-});
-
-// Admin Login
 router.post('/login', async (req, res) => {
   try {
+    console.log("LOGIN REQUEST RECEIVED");
+
     const { username, password } = req.body;
 
-    // Find User
+    console.log("Username:", username);
+
     const user = await User.findOne({ username });
+
+    console.log("User found:", user);
 
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid admin username or password'
+        message: 'User not found'
       });
     }
 
-    // Verify Password
     const isMatch = await bcrypt.compare(password, user.password);
+
+    console.log("Password Match:", isMatch);
 
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid admin username or password'
+        message: 'Wrong password'
       });
     }
 
-    // Generate JWT
     const token = jwt.sign(
       {
         id: user._id,
         username: user.username
       },
-      process.env.JWT_SECRET || 'shiv_travels_super_secret_jwt_key_2026',
+      process.env.JWT_SECRET,
       {
         expiresIn: '24h'
       }
@@ -57,17 +57,17 @@ router.post('/login', async (req, res) => {
 
     res.json({
       success: true,
-      token,
-      message: 'Authentication successful'
+      token
     });
 
   } catch (error) {
+    console.error("LOGIN ERROR:", error);
+
     res.status(500).json({
       success: false,
-      message: error.message
+      error: error.message
     });
   }
 });
 
 export default router;
-```
